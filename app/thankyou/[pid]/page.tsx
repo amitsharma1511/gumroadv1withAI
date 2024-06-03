@@ -1,7 +1,13 @@
 import { getProductById } from "@/utils/supabase/data-service";
 import Link from "next/link";
 
-export default async function ThankYou({ params }) {
+interface ProductParams {
+  params: {
+    pid: string;
+  };
+}
+
+export default async function ThankYou({ params }: ProductParams) {
   interface Product {
     id: number;
     created_at: string;

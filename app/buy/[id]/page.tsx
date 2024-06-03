@@ -22,7 +22,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-export default function PaymentCard({ params }) {
+interface PaymentCardParams {
+  params: {
+    id: string;
+  };
+}
+
+export default function PaymentCard({ params }: PaymentCardParams) {
   console.log(params.id);
   const gotothanks = async (formData: FormData) => {
     "use server";
