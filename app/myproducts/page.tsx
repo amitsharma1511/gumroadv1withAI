@@ -92,7 +92,9 @@ export default async function MyProducts() {
                   </TableCell>
                   <TableCell>{product.description}</TableCell>
                   <TableCell>{product.sold_quantity}</TableCell>
-                  <TableCell>$TotalSales</TableCell>
+                  <TableCell>
+                    ${product.sold_quantity * product.price}
+                  </TableCell>
                 </TableRow>
               );
             })}

@@ -17,9 +17,10 @@ export type FormData = {
   sellerEmail: string;
 };
 
-const supabase = createClient();
+// const supabase = createClient();
 
 export async function createProduct(formdata: FormData) {
+  const supabase = createClient();
   console.log(formdata);
 
   const origin = headers().get("origin");
@@ -44,6 +45,22 @@ export async function createProduct(formdata: FormData) {
     throw new Error("Product could not be created");
   }
 
-  revalidatePath("/buy/myproducts");
+  revalidatePath("/myproducts");
   redirect("/myproducts");
+}
+
+export async function updateSaleQuantity(productId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.rpc("increment_sold_quantity", {
+    p_product_id: productId,
+  });
+
+  if (error) {
+    console.error("Error updating sale quantity:", error);
+  } else {
+    console.log("Sale quantity updated successfully:", data);
+  }
+
+  revalidatePath("/myproducts");
 }

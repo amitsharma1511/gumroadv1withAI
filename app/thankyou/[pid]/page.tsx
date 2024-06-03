@@ -1,6 +1,7 @@
 import { getProductById } from "@/utils/supabase/data-service";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { updateSaleQuantity } from "@/utils/supabase/actions";
 
 interface ProductParams {
   params: {
@@ -21,6 +22,8 @@ export default async function ThankYou({ params }: ProductParams) {
     seller_email: string;
     sold_quantity: number;
   }
+
+  await updateSaleQuantity(params.pid);
 
   const productData: Product[] = await getProductById(params.pid);
   console.log(productData);
