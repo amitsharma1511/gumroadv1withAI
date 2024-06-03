@@ -1,4 +1,5 @@
 import { getProductById } from "@/utils/supabase/data-service";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 interface ProductParams {
@@ -23,6 +24,10 @@ export default async function ThankYou({ params }: ProductParams) {
 
   const productData: Product[] = await getProductById(params.pid);
   console.log(productData);
+
+  if (productData.length < 1) {
+    redirect("/");
+  }
 
   const { name, description, file_url } = productData[0];
 
