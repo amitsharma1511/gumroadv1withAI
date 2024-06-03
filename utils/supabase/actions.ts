@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 // const productId = nanoid();
 
 export type FormData = {
@@ -21,8 +22,10 @@ const supabase = createClient();
 export async function createProduct(formdata: FormData) {
   console.log(formdata);
 
+  const origin = headers().get("origin");
+
   const productId = nanoid();
-  const payUrl = `http://localhost:3000/buy/${productId}`;
+  const payUrl = `${origin}/buy/${productId}`;
 
   const { productname, price, url, description, sellerEmail } = formdata;
 
