@@ -1,6 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { getProductList } from "@/utils/supabase/data-service";
+import {
+  getProductList,
+  get_seller_products_with_sales,
+} from "@/utils/supabase/data-service";
 import {
   Table,
   TableHeader,
@@ -12,16 +15,14 @@ import {
 import Link from "next/link";
 
 interface Product {
-  id: number;
-  created_at: string;
   name: string;
   price: number;
   file_url: string;
   product_id: string;
   payment_url: string;
   description: string;
-  seller_email: string;
-  sold_quantity: number;
+  total_sales: number;
+  order_count: number;
 }
 
 export default async function MyProducts() {
@@ -38,7 +39,7 @@ export default async function MyProducts() {
   const userEmail: string = user.email || "";
   // console.log(userEmail)
 
-  const products: Product[] = await getProductList(userEmail);
+  const products: Product[] = await get_seller_products_with_sales(userEmail);
   // console.log(products);
 
   return (
@@ -67,7 +68,7 @@ export default async function MyProducts() {
           <TableBody>
             {products.map((product: Product) => {
               return (
-                <TableRow key={product.id}>
+                <TableRow key={product.product_id}>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.price}</TableCell>
                   <TableCell>
@@ -91,10 +92,8 @@ export default async function MyProducts() {
                     </Link>
                   </TableCell>
                   <TableCell>{product.description}</TableCell>
-                  <TableCell>{product.sold_quantity}</TableCell>
-                  <TableCell>
-                    ${product.sold_quantity * product.price}
-                  </TableCell>
+                  <TableCell>{product.order_count}</TableCell>
+                  <TableCell>${product.total_sales}</TableCell>
                 </TableRow>
               );
             })}

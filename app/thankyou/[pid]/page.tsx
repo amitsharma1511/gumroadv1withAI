@@ -1,7 +1,9 @@
-import { getProductById } from "@/utils/supabase/data-service";
+import { getFileUrl, getProductById } from "@/utils/supabase/data-service";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { updateSaleQuantity } from "@/utils/supabase/actions";
+import { getOrderDataCookie } from "@/lib/session";
+// import { useEffect, useState } from "react";
 
 interface ProductParams {
   params: {
@@ -9,30 +11,35 @@ interface ProductParams {
   };
 }
 
+interface Product {
+  // id: number;
+  // created_at: string;
+  name: string;
+  // price: number;
+  file_url: string;
+  // product_id: string;
+  // payment_url: string;
+  description: string;
+  // seller_email: string;
+  // sold_quantity: number;
+}
+
 export default async function ThankYou({ params }: ProductParams) {
-  interface Product {
-    id: number;
-    created_at: string;
-    name: string;
-    price: number;
-    file_url: string;
-    product_id: string;
-    payment_url: string;
-    description: string;
-    seller_email: string;
-    sold_quantity: number;
-  }
+  const session = await getOrderDataCookie();
 
-  await updateSaleQuantity(params.pid);
+  console.log("COOKIE:", session.pid);
+  console.log("COOKIE:", session.trxId);
 
-  const productData: Product[] = await getProductById(params.pid);
-  console.log(productData);
+  // await updateSaleQuantity(params.pid);
+  let productData: Product[];
 
-  if (productData.length < 1) {
+  if (session.trxId && params.pid == session.pid) {
+    productData = await getFileUrl(session.pid);
+  } else {
     redirect("/");
   }
 
-  const { name, description, file_url } = productData[0];
+  const { description, file_url, name } = productData[0];
 
   return (
     <div className="mt-10 mb-10 flex items-center justify-center bg-gray-100 p-4">

@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 interface ProductFormProps {
-  userEmail: string;
+  sellerEmail: string;
 }
 
 const formSchema = z.object({
@@ -41,7 +41,7 @@ const formSchema = z.object({
   file: z.custom<FileList>((val) => val instanceof FileList).optional(),
 });
 
-export default function ProductForm({ userEmail }: ProductFormProps) {
+export default function ProductForm({ sellerEmail }: ProductFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,15 +56,27 @@ export default function ProductForm({ userEmail }: ProductFormProps) {
   const fileRef = form.register("file");
 
   // TODO: Define a submit handler
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values);
-    // let dataToSend;
-    // if (values.file) {
-    //   dataToSend = { ...values, file: values.file[0] };
-    // } else {
-    //   dataToSend = values;
-    // }
-    createProduct({ ...values, sellerEmail: userEmail });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("VALUES", values);
+
+    if (values.file) {
+      const file = values.file?.[0];
+      const formData = new FormData();
+      formData.append("files", file);
+
+      await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+    } else {
+      console.log("No file selected");
+    }
+
+    const { file, ...remainingValues } = values;
+    console.log("Remaininf Values", remainingValues);
+
+    createProduct({ ...remainingValues, sellerEmail });
+    form.reset();
   }
 
   return (
