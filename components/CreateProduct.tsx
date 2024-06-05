@@ -59,12 +59,14 @@ export default function ProductForm({ sellerEmail }: ProductFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("VALUES", values);
 
+    let response;
+
     if (values.file) {
       const file = values.file?.[0];
       const formData = new FormData();
       formData.append("files", file);
 
-      await fetch("/api/upload", {
+      response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -73,9 +75,24 @@ export default function ProductForm({ sellerEmail }: ProductFormProps) {
     }
 
     const { file, ...remainingValues } = values;
-    console.log("Remaininf Values", remainingValues);
 
-    createProduct({ ...remainingValues, sellerEmail });
+    let uploaded_file_url;
+
+    if (response?.ok) {
+      const data = await response.json();
+      uploaded_file_url = data.uploaded_file_url;
+      createProduct({
+        ...remainingValues,
+        sellerEmail,
+        url: uploaded_file_url,
+      });
+    } else {
+      createProduct({ ...remainingValues, sellerEmail });
+      console.error("ERROR: ", response?.statusText);
+    }
+
+    // console.log("Remaininf Values", remainingValues);
+
     form.reset();
   }
 
