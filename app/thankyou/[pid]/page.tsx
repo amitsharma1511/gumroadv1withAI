@@ -1,7 +1,6 @@
 import { getFileUrl, getProductById } from "@/utils/supabase/data-service";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { updateSaleQuantity } from "@/utils/supabase/actions";
 import { getOrderDataCookie } from "@/lib/session";
 // import { useEffect, useState } from "react";
 

@@ -2,13 +2,10 @@ import PaymentCard from "@/components/PaymentCard";
 import { getProductById } from "@/utils/supabase/data-service";
 import { nanoid } from "nanoid";
 
-interface PaymentCardParams {
+interface IdParams {
   params: {
     id: string;
   };
-  seller_email: string;
-  price: number;
-  transactionId: string;
 }
 
 interface Product {
@@ -19,7 +16,7 @@ interface Product {
   seller_email: string;
 }
 
-export default async function Buy({ params }: PaymentCardParams) {
+export default async function Buy({ params }: IdParams) {
   const productId = params.id;
 
   const productData: Product[] = await getProductById(productId);

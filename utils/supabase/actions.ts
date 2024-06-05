@@ -62,22 +62,6 @@ export async function createProduct(formdata: ProductData) {
   redirect("/myproducts");
 }
 
-export async function updateSaleQuantity(productId: string) {
-  const supabase = createClient();
-
-  const { data, error } = await supabase.rpc("increment_sold_quantity", {
-    p_product_id: productId,
-  });
-
-  if (error) {
-    console.error("Error updating sale quantity:", error);
-  } else {
-    console.log("Sale quantity updated successfully:", data);
-  }
-
-  revalidatePath("/myproducts");
-}
-
 export async function createPurchaseOrder(purchaseOrderData: PurchaseOrder) {
   const supabase = createClient();
   console.log("ACTIONS Purchase Order Data :", purchaseOrderData);
